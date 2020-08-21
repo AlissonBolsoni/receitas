@@ -1,11 +1,18 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from .models import Receita
 
-def index(request):
-    receitas = Receita.objects.all()
 
+def index(request):
+    receitas = Receita.objects.order_by('-data_receita').filter(ativa=True)
+
+    nome_a_buscar = ''
+    if 'buscar' in request.GET:
+        if buscar:
+            nome_a_buscar = request.GET['buscar']
+
+    receitas_filtradas = receitas.filter(nome_receita__icontains=nome_a_buscar)
     dados = {
-        'receitas': receitas
+        'receitas': receitas_filtradas
     }
     return render(request, 'index.html', dados)
 
@@ -16,3 +23,7 @@ def receita(request, receita_id):
         'receita': receita
     }
     return render(request, 'receita.html', receita_a_exibir)
+
+
+def buscar(request):
+    return index(request)
